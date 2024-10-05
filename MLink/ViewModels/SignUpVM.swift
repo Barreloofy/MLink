@@ -15,21 +15,20 @@ final class SignUpViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var showAlert = false
     var errorMessage = ""
-    
     private let authService = AuthService()
-    private let authViewModel: AuthViewModel
+    private weak var authViewModel: AuthViewModel?
     
     func signUp() {
         isLoading.toggle()
         Task {
             do {
                 let user = try await authService.signUp(with: username, for: email, with: password)
-                authViewModel.currentUser = user
+                authViewModel?.currentUser = user
                 isLoading.toggle()
             } catch {
                 errorMessage = error.localizedDescription
-                isLoading.toggle()
                 showAlert.toggle()
+                isLoading.toggle()
             }
         }
     }

@@ -10,8 +10,21 @@ import FirebaseAuth
 
 struct AuthService {
     let firestoreService = FirestoreService()
+    private enum AuthError: Error, LocalizedError {
+        case valueNotFound(String)
+        
+        var errorDescription: String? {
+            switch self {
+                case .valueNotFound(let message):
+                    return message
+            }
+        }
+    }
     
     func signUp(with username: String, for email: String, with password: String) async throws -> UserModel {
+        guard !username.isEmpty else {
+            throw AuthError.valueNotFound("Username is empty.")
+        }
         let result = try await Auth.auth().createUser(withEmail: email, password: password)
         try await firestoreService.createUser(from: result.user.uid, with: username)
         return try await firestoreService.fetchUser(from: result.user.uid)
@@ -20,5 +33,9 @@ struct AuthService {
     func signIn(for email: String, with password: String) async throws -> UserModel {
         let result = try await Auth.auth().signIn(withEmail: email, password: password)
         return try await firestoreService.fetchUser(from: result.user.uid)
+    }
+    
+    func signOut() throws {
+        try Auth.auth().signOut()
     }
 }

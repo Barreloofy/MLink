@@ -10,4 +10,13 @@ import Foundation
 @MainActor
 final class AuthViewModel: ObservableObject {
     @Published var currentUser: UserModel?
+    
+    private let authService = AuthService()
+    
+    func signOut() {
+        do {
+            try authService.signOut()
+            currentUser = nil
+        } catch {}
+    }
 }

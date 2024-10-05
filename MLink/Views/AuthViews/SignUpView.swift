@@ -52,7 +52,7 @@ struct SignUpView: View {
                 LoadingView()
             }
             if viewModel.showAlert {
-                AlertView(isPresented: $viewModel.showAlert)
+                AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
             }
         }
     }

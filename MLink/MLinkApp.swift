@@ -15,7 +15,7 @@ struct MLinkApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            AuthenticationView()
+            ContentView()
         }
     }
 }

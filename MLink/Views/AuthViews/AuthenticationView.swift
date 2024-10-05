@@ -9,14 +9,8 @@ import SwiftUI
 
 struct AuthenticationView: View {
     @Environment(\.colorScheme) private var colorScheme
-    @StateObject private var viewModel: SignInViewModel
-    @StateObject private var authViewModel: AuthViewModel
-    
-    init() {
-        let authVM = AuthViewModel()
-        _authViewModel = StateObject(wrappedValue: authVM)
-        _viewModel = StateObject(wrappedValue: SignInViewModel(authViewModel: authVM))
-    }
+    @EnvironmentObject private var authViewModel: AuthViewModel
+    @StateObject var viewModel: SignInViewModel
     
     var body: some View {
         NavigationStack {
@@ -48,10 +42,9 @@ struct AuthenticationView: View {
                 }
             }
         }
-        .environmentObject(authViewModel)
     }
 }
 
 #Preview {
-    AuthenticationView()
+    AuthenticationView(viewModel: SignInViewModel(authViewModel: AuthViewModel()))
 }
