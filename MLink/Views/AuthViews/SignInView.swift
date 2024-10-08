@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SignInView: View {
-    @ObservedObject var viewModel: SignInViewModel
+    @EnvironmentObject private var viewModel: AuthenticationViewModel
     
     var body: some View {
         Text("MLink")
@@ -32,5 +32,5 @@ struct SignInView: View {
 }
 
 #Preview {
-    SignInView(viewModel: SignInViewModel(authViewModel: AuthViewModel()))
+    SignInView()
 }

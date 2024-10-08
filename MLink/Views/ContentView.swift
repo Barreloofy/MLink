@@ -8,21 +8,36 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var viewModel = AuthViewModel()
+    @StateObject private var viewModel = UserStateViewModel()
+    @State private var isLaunching = true
     
     var body: some View {
         Group {
-            if viewModel.currentUser != nil {
-                TabScene()
+            if isLaunching {
+                LaunchView()
+                    .onAppear {
+                        Task {
+                            try await Task.sleep(nanoseconds: 1_000_000_000)
+                            isLaunching = false
+                        }
+                    }
             } else {
-                AuthenticationView(viewModel: SignInViewModel(authViewModel: viewModel))
+                Group {
+                    if viewModel.currentUser != nil {
+                        TabScene()
+                    } else {
+                        AuthenticationView()
+                    }
+                }
+                .environmentObject(viewModel)
             }
         }
-        .environmentObject(viewModel)
+        .animation(.easeInOut, value: isLaunching)
+        .transition(.opacity)
     }
 }
 
 #Preview {
     ContentView()
-        .environmentObject(AuthViewModel())
+        .environmentObject(UserStateViewModel())
 }

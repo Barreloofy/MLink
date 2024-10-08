@@ -6,13 +6,11 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 @main
 struct MLinkApp: App {
-    init() {
-        FirebaseApp.configure()
-    }
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

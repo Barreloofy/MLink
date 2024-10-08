@@ -8,38 +8,14 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @StateObject var viewModel: ProfileViewModel
+    @StateObject private var viewModel = ProfileViewModel()
+    @EnvironmentObject private var userState: UserStateViewModel
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                VStack {
-                    ImageView(image: viewModel.image)
-                        .frame(width: 180, height: 180)
-                        .clipShape(Circle())
-                        .shadow(radius: 10)
-                    Divider()
-                        .frame(height: 3)
-                        .background(Color.gray)
-                        .padding(10)
-                    Text(viewModel.username)
-                        .font(.headline)
-                    Text(viewModel.bioText)
-                        .fontWeight(.medium)
+        ZStack {
+            VStack {
+                HStack {
                     Spacer()
-                }
-                if viewModel.isLoading {
-                    LoadingView()
-                }
-                if viewModel.showAlert {
-                    AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
-                }
-            }
-            .onAppear {
-                viewModel.getImage()
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.showEditPage.toggle()
                     } label: {
@@ -48,10 +24,40 @@ struct ProfileView: View {
                     }
                     .buttonStyle(SimpleButtonStyle())
                 }
+                .padding()
+                ImageView(imageData: viewModel.imageData)
+                    .frame(width: 180, height: 180)
+                    .clipShape(Circle())
+                    .shadow(radius: 10)
+                Divider()
+                    .frame(height: 3)
+                    .background(Color.gray)
+                    .padding(10)
+                Text(viewModel.username)
+                    .font(.title)
+                    .fontWeight(.heavy)
+                Text(viewModel.bioText)
+                    .fontWeight(.medium)
+                Spacer()
             }
-            .sheet(isPresented: $viewModel.showEditPage) {
-                EditProfileView(viewModel: viewModel)
+            if viewModel.isLoading {
+                LoadingView()
+            }
+            if viewModel.showAlert {
+                AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
             }
         }
+        .sheet(isPresented: $viewModel.showEditPage) {
+            EditProfileView(viewModel: viewModel)
+        }
+        .onAppear {
+            viewModel.uid = userState.currentUser?.id
+            viewModel.fetchUser()
+        }
     }
+}
+
+#Preview {
+    ProfileView()
+        .environmentObject(UserStateViewModel())
 }

@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct ImageView: View {
-    let image: UIImage?
+    let imageData: Data?
     
     var body: some View {
-        if let image = image {
-            Image(uiImage: image)
+        if let imageData = imageData, let uiImage = UIImage(data: imageData) {
+            Image(uiImage: uiImage)
                 .resizable()
         } else {
             Image(systemName: "person.circle")
@@ -22,5 +22,5 @@ struct ImageView: View {
 }
 
 #Preview {
-    ImageView(image: nil)
+    ImageView(imageData: nil)
 }

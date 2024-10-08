@@ -9,25 +9,29 @@ import SwiftUI
 import PhotosUI
 
 struct EditProfileView: View {
-    @StateObject var viewModel: ProfileViewModel
+    @ObservedObject var viewModel: ProfileViewModel
     
     var body: some View {
         ZStack {
-            Rectangle()
-                .fill(.ultraThinMaterial)
-                .ignoresSafeArea()
             VStack {
                 VStack {
-                    ImageView(image: viewModel.image)
+                    ImageView(imageData: viewModel.imageData)
                         .frame(width: 100, height: 100)
                         .clipShape(Circle())
-                    PhotosPicker("Change Photot",selection: $viewModel.imageSelection, matching: .images)
+                    PhotosPicker("Change Photo",selection: $viewModel.selectedItem, matching: .images)
+                        .fontWeight(.heavy)
                         .buttonStyle(SimpleButtonStyle())
+                        .onChange(of: viewModel.selectedItem) {
+                            viewModel.loadImage()
+                        }
                     TextField("Username", text: $viewModel.username)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .fontWeight(.medium)
-                        .padding(.leading, 5)
+                        .padding(10)
+                        .onChange(of: viewModel.username) {
+                            viewModel.enforceLength(for: &viewModel.username, maxLength: 30)
+                        }
                     Divider()
                         .padding(5)
                     ZStack {
@@ -38,10 +42,13 @@ struct EditProfileView: View {
                         }
                         TextEditor(text: $viewModel.bioText)
                             .fontWeight(.medium)
+                            .onChange(of: viewModel.bioText) {
+                                viewModel.enforceLength(for: &viewModel.bioText, maxLength: 52)
+                            }
                     }
                     .scrollContentBackground(.hidden)
                     .frame(minHeight: 100, maxHeight: 100)
-                    .padding(.bottom, 5)
+                    .padding(10)
                     Button {
                         viewModel.updateUser()
                         viewModel.showEditPage.toggle()
@@ -52,9 +59,10 @@ struct EditProfileView: View {
                     .buttonStyle(SimpleButtonStyle())
                     
                 }
-                .frame(width: 360, height: 360)
-                .background(.ultraThickMaterial)
+                .frame(width: 360, height: 390)
+                .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .padding(25)
                 Spacer()
             }
             if viewModel.showAlert {
@@ -65,5 +73,5 @@ struct EditProfileView: View {
 }
 
 #Preview {
-    EditProfileView(viewModel: ProfileViewModel(authViewModel: AuthViewModel()))
+    EditProfileView(viewModel: ProfileViewModel())
 }

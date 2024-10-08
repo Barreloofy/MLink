@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TabScene: View {
-    @EnvironmentObject private var viewModel: AuthViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         TabView {
@@ -16,12 +16,13 @@ struct TabScene: View {
                 HomeView()
             }
             Tab("", systemImage: "person.circle") {
-                ProfileView(viewModel: ProfileViewModel(authViewModel: viewModel))
+                ProfileView()
             }
             Tab("", systemImage: "gear") {
                 SettingsView()
             }
         }
+        .tint(colorScheme == .light ? .black : .white)
     }
 }
 

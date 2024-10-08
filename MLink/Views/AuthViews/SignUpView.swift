@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SignUpView: View {
+    @EnvironmentObject private var viewModel: AuthenticationViewModel
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel: SignUpViewModel
     
     var body: some View {
         ZStack {
@@ -59,5 +59,5 @@ struct SignUpView: View {
 }
 
 #Preview {
-    SignUpView(viewModel: SignUpViewModel(authViewModel: AuthViewModel()))
+    SignUpView()
 }

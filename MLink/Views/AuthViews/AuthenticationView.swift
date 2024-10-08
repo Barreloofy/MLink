@@ -8,20 +8,19 @@
 import SwiftUI
 
 struct AuthenticationView: View {
+    @StateObject private var viewModel = AuthenticationViewModel()
     @Environment(\.colorScheme) private var colorScheme
-    @EnvironmentObject private var authViewModel: AuthViewModel
-    @StateObject var viewModel: SignInViewModel
     
     var body: some View {
         NavigationStack {
             ZStack {
                 VStack {
-                    SignInView(viewModel: viewModel)
+                    SignInView()
                     Text("no account yet?")
                         .font(.caption)
                         .fontWeight(.light)
                     NavigationLink {
-                        SignUpView(viewModel: SignUpViewModel(authViewModel: authViewModel))
+                        SignUpView()
                     } label: {
                         Text("Sign Up")
                             .fontWeight(.heavy)
@@ -42,9 +41,10 @@ struct AuthenticationView: View {
                 }
             }
         }
+        .environmentObject(viewModel)
     }
 }
 
 #Preview {
-    AuthenticationView(viewModel: SignInViewModel(authViewModel: AuthViewModel()))
+    AuthenticationView()
 }
