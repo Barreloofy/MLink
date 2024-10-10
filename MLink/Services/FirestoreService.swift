@@ -17,6 +17,17 @@ struct FirestoreService {
         try await document.setData(from: post)
     }
     
+    static func fetchPosts() async throws -> [PostModel] {
+        let documents = try await postsReference.getAllDocuments().documents
+        return try documents.map { try $0.data(as: PostModel.self) }
+    }
+    
+    static func fetchPosts(for userId: String) async throws -> [PostModel] {
+        let query = postsReference.whereField("authorId", isEqualTo: userId)
+        let documents = try await query.getAllDocuments().documents
+        return try documents.map { try $0.data(as: PostModel.self)}
+    }
+    
     // MARK: - Methods for the UserModel.
     static func createUser(_ user: UserModel) async throws {
         let document = usersReference.document(user.id)
@@ -49,6 +60,24 @@ extension DocumentReference {
                 continuation.resume()
             } catch {
                 continuation.resume(throwing: error)
+            }
+        }
+    }
+}
+
+extension Query {
+    func getAllDocuments() async throws -> QuerySnapshot {
+        return try await withCheckedThrowingContinuation { continuation in
+            getDocuments { querySnapshot, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                guard let querySnapshot = querySnapshot else {
+                    continuation.resume(throwing: CustomError.expectationError("Unexpectedly found nil while unwrapping an Optional value"))
+                    return
+                }
+                continuation.resume(returning: querySnapshot)
             }
         }
     }

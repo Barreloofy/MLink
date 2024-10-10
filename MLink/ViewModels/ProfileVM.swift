@@ -11,15 +11,17 @@ import PhotosUI
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
+    @Published var userPosts = [PostModel]()
     @Published var username = ""
     @Published var bioText = ""
     @Published var selectedItem: PhotosPickerItem?
     @Published var imageData: Data?
     @Published var showEditPage = false
     @Published var isLoading = false
-    @Published var showAlert = false
+    @Published var showAlert = false { didSet { errorMessage = showAlert ? errorMessage : "" } }
     var errorMessage = ""
     var uid: String?
+    private var userWasFetched = false
     
     func enforceLength(for property: inout String, maxLength: Int) {
         if property.count > maxLength {
@@ -58,7 +60,7 @@ final class ProfileViewModel: ObservableObject {
     
     func fetchUser() {
         Task {
-            isLoading = true
+            guard !userWasFetched else { return }
             do {
                 guard let uid = uid else { throw CustomError.expectationError("User is nil.") }
                 let user = try await FirestoreService.fetchUser(for: uid)
@@ -66,12 +68,44 @@ final class ProfileViewModel: ObservableObject {
                 bioText = user.biography ?? ""
                 guard let url = user.profileImageUrl else { throw CustomError.expectationError("URL not found.") }
                 imageData = try await StorageService.getImageData(for: url)
-                isLoading = false
+                userWasFetched = true
             } catch {
                 errorMessage = error.localizedDescription
                 showAlert = true
                 isLoading = false
             }
         }
+    }
+    
+    func fetchUserPosts() {
+        Task {
+            guard userPosts.isEmpty else { return }
+            do {
+                guard let uid = uid else { throw CustomError.expectationError("User is nil.") }
+                userPosts = try await FirestoreService.fetchPosts(for: uid)
+            } catch {
+                errorMessage = error.localizedDescription
+                showAlert = true
+                isLoading = false
+            }
+        }
+    }
+    
+    // MARK: - Convenience method.
+    func saveEdit() {
+        isLoading = true
+        updateUser()
+        fetchUser()
+        if errorMessage.isEmpty {
+            showEditPage.toggle()
+        }
+        isLoading = false
+    }
+    
+    func onAppear() {
+        isLoading = true
+        fetchUser()
+        fetchUserPosts()
+        isLoading = false
     }
 }

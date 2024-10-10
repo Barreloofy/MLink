@@ -13,32 +13,37 @@ struct ProfileView: View {
     
     var body: some View {
         ZStack {
-            VStack {
-                HStack {
-                    Spacer()
-                    Button {
-                        viewModel.showEditPage.toggle()
-                    } label: {
-                        Text("Edit")
-                            .fontWeight(.heavy)
+            ScrollView {
+                LazyVStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            viewModel.showEditPage.toggle()
+                        } label: {
+                            Text("Edit")
+                                .fontWeight(.heavy)
+                        }
+                        .buttonStyle(SimpleButtonStyle())
                     }
-                    .buttonStyle(SimpleButtonStyle())
+                    .padding()
+                    ImageView(imageData: viewModel.imageData)
+                        .frame(width: 180, height: 180)
+                        .clipShape(Circle())
+                        .shadow(radius: 10)
+                    Divider()
+                        .frame(height: 3)
+                        .background(Color.gray)
+                        .padding(10)
+                    Text(viewModel.username)
+                        .font(.title)
+                        .fontWeight(.heavy)
+                    Text(viewModel.bioText)
+                        .fontWeight(.medium)
+                    Spacer()
+                    ForEach(viewModel.userPosts) { post in
+                        PostView(post: post, imageData: nil)
+                    }
                 }
-                .padding()
-                ImageView(imageData: viewModel.imageData)
-                    .frame(width: 180, height: 180)
-                    .clipShape(Circle())
-                    .shadow(radius: 10)
-                Divider()
-                    .frame(height: 3)
-                    .background(Color.gray)
-                    .padding(10)
-                Text(viewModel.username)
-                    .font(.title)
-                    .fontWeight(.heavy)
-                Text(viewModel.bioText)
-                    .fontWeight(.medium)
-                Spacer()
             }
             if viewModel.isLoading {
                 LoadingView()
@@ -52,7 +57,7 @@ struct ProfileView: View {
         }
         .onAppear {
             viewModel.uid = userState.currentUser?.id
-            viewModel.fetchUser()
+            viewModel.onAppear()
         }
     }
 }

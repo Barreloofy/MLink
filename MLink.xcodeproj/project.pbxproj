@@ -14,9 +14,11 @@
 		29310E342CADAE2E002F6412 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29310E332CADAE2E002F6412 /* AlertView.swift */; };
 		2949F4342CB1EF0700192A0B /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2949F4332CB1EF0700192A0B /* ProfileView.swift */; };
 		296946EC2CB40C5E000E4EB1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296946EB2CB40C4B000E4EB1 /* AppDelegate.swift */; };
+		296AF6A82CB6EDAC00DBE4C6 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 296AF6A72CB6EDAC00DBE4C6 /* PostView.swift */; };
 		29A65F5A2CB2E07F00EBAA89 /* PostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A65F592CB2E07F00EBAA89 /* PostModel.swift */; };
 		29A65F5C2CB2E31400EBAA89 /* PostForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A65F5B2CB2E31400EBAA89 /* PostForm.swift */; };
 		29A65F612CB31A8E00EBAA89 /* CustomError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A65F602CB31A8400EBAA89 /* CustomError.swift */; };
+		29B340882CB857C30004095F /* HomeVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B340872CB857B90004095F /* HomeVM.swift */; };
 		29B3C4982CB44D3D00C077B2 /* AuthVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B3C4972CB44D3D00C077B2 /* AuthVM.swift */; };
 		29B3C49A2CB4541800C077B2 /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B3C4992CB453F300C077B2 /* FirestoreService.swift */; };
 		29B3C49C2CB464A900C077B2 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29B3C49B2CB4649D00C077B2 /* AuthService.swift */; };
@@ -52,9 +54,11 @@
 		29310E332CADAE2E002F6412 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		2949F4332CB1EF0700192A0B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		296946EB2CB40C4B000E4EB1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		296AF6A72CB6EDAC00DBE4C6 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		29A65F592CB2E07F00EBAA89 /* PostModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostModel.swift; sourceTree = "<group>"; };
 		29A65F5B2CB2E31400EBAA89 /* PostForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostForm.swift; sourceTree = "<group>"; };
 		29A65F602CB31A8400EBAA89 /* CustomError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomError.swift; sourceTree = "<group>"; };
+		29B340872CB857B90004095F /* HomeVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVM.swift; sourceTree = "<group>"; };
 		29B3C4972CB44D3D00C077B2 /* AuthVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthVM.swift; sourceTree = "<group>"; };
 		29B3C4992CB453F300C077B2 /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		29B3C49B2CB4649D00C077B2 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 				29C482B72CAE174700F4DFD7 /* AuthViews */,
 				291C784F2CAF34AA00BCEDF3 /* TabViews */,
 				29C65C8B2CACB72F00C798A2 /* Helper */,
+				296AF6A72CB6EDAC00DBE4C6 /* PostView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -206,6 +211,7 @@
 		29C65C852CACB22E00C798A2 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				29B340872CB857B90004095F /* HomeVM.swift */,
 				29B3C49F2CB48DFC00C077B2 /* ProfileVM.swift */,
 				29B3C4972CB44D3D00C077B2 /* AuthVM.swift */,
 				29B3C49D2CB47F0D00C077B2 /* UserStateVM.swift */,
@@ -336,8 +342,10 @@
 				29A65F612CB31A8E00EBAA89 /* CustomError.swift in Sources */,
 				29BE7B572CB0340900C27C01 /* ImageView.swift in Sources */,
 				29EC37082CB5AA5200ED1EDB /* LaunchView.swift in Sources */,
+				296AF6A82CB6EDAC00DBE4C6 /* PostView.swift in Sources */,
 				29B3C4982CB44D3D00C077B2 /* AuthVM.swift in Sources */,
 				29B3C49E2CB47F0D00C077B2 /* UserStateVM.swift in Sources */,
+				29B340882CB857C30004095F /* HomeVM.swift in Sources */,
 				29C65C9A2CACC68F00C798A2 /* SimpleButtonStyle.swift in Sources */,
 				29C65C962CACBF9E00C798A2 /* SignUpView.swift in Sources */,
 				29C65C8E2CACB7F400C798A2 /* AuthenticationView.swift in Sources */,

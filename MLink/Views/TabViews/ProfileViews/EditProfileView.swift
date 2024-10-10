@@ -50,8 +50,7 @@ struct EditProfileView: View {
                     .frame(minHeight: 100, maxHeight: 100)
                     .padding(10)
                     Button {
-                        viewModel.updateUser()
-                        viewModel.showEditPage.toggle()
+                        viewModel.saveEdit()
                     } label: {
                         Text("Save")
                             .fontWeight(.heavy)

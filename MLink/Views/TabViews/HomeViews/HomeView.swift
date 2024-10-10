@@ -8,25 +8,53 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var showSheet = false
+    @StateObject private var viewModel = HomeViewModel()
     
     var body: some View {
-        HStack {
-            Spacer()
-            Button {
-                showSheet.toggle()
-            } label: {
-                Text("Create Post")
-                    .fontWeight(.heavy)
+        ZStack {
+            VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        viewModel.showSheet.toggle()
+                    } label: {
+                        Text("Create Post")
+                            .fontWeight(.heavy)
+                    }
+                    .buttonStyle(SimpleButtonStyle())
+                    .sheet(isPresented: $viewModel.showSheet) {
+                        PostForm()
+                    }
+                }
+                .padding()
+                Spacer()
+                if !viewModel.posts.isEmpty {
+                    List(viewModel.posts) { post in
+                        PostView(post: post, imageData: nil)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                    .scrollContentBackground(.hidden)
+                } else {
+                    Text("No post's yet")
+                        .font(.title)
+                        .fontWeight(.heavy)
+                    Spacer()
+                }
             }
-            .buttonStyle(SimpleButtonStyle())
-            .sheet(isPresented: $showSheet) {
-                PostForm()
+            if viewModel.isLoading {
+                LoadingView()
+            }
+            if viewModel.showAlert {
+                AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
             }
         }
-        .padding()
-        Spacer()
-        List {}
+        .onAppear {
+            viewModel.fetchAllPosts(refreshable: false)
+        }
+        .refreshable {
+            viewModel.fetchAllPosts(refreshable: true)
+        }
     }
 }
 
