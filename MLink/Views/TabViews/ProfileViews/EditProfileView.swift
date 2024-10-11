@@ -13,6 +13,10 @@ struct EditProfileView: View {
     
     var body: some View {
         ZStack {
+            Rectangle()
+                .fill(.ultraThickMaterial)
+                .opacity(0.25)
+                .ignoresSafeArea()
             VStack {
                 VStack {
                     ImageView(imageData: viewModel.imageData)

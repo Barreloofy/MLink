@@ -11,10 +11,36 @@ struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
     
     var body: some View {
-        ZStack {
-            VStack {
-                HStack {
-                    Spacer()
+        NavigationStack {
+            ZStack {
+                Rectangle()
+                    .fill(.ultraThickMaterial)
+                    .opacity(0.25)
+                    .ignoresSafeArea()
+                Group {
+                    if viewModel.posts.isEmpty {
+                        Text("No post's yet")
+                            .font(.title)
+                            .fontWeight(.heavy)
+                    } else {
+                        ScrollView {
+                            LazyVStack {
+                                ForEach(viewModel.posts) { post in
+                                    PostView(post: post)
+                                }
+                            }
+                        }
+                    }
+                }
+                if viewModel.isLoading {
+                    LoadingView()
+                }
+                if viewModel.showAlert {
+                    AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         viewModel.showSheet.toggle()
                     } label: {
@@ -26,28 +52,8 @@ struct HomeView: View {
                         PostForm()
                     }
                 }
-                .padding()
-                Spacer()
-                if !viewModel.posts.isEmpty {
-                    List(viewModel.posts) { post in
-                        PostView(post: post, imageData: nil)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                    }
-                    .scrollContentBackground(.hidden)
-                } else {
-                    Text("No post's yet")
-                        .font(.title)
-                        .fontWeight(.heavy)
-                    Spacer()
-                }
             }
-            if viewModel.isLoading {
-                LoadingView()
-            }
-            if viewModel.showAlert {
-                AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
-            }
+            .toolbarVisibility(viewModel.isLoading ? .hidden : .visible)
         }
         .onAppear {
             viewModel.fetchAllPosts(refreshable: false)
@@ -60,4 +66,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(UserStateViewModel())
 }

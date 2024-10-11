@@ -18,14 +18,23 @@ struct FirestoreService {
     }
     
     static func fetchPosts() async throws -> [PostModel] {
-        let documents = try await postsReference.getAllDocuments().documents
+        let query = postsReference.order(by: "timestamp", descending: true).limit(to: 100)
+        let documents = try await query.getAllDocuments().documents
         return try documents.map { try $0.data(as: PostModel.self) }
     }
     
+    // Not used because of memory leaks in Firestore SDK.
     static func fetchPosts(for userId: String) async throws -> [PostModel] {
         let query = postsReference.whereField("authorId", isEqualTo: userId)
         let documents = try await query.getAllDocuments().documents
         return try documents.map { try $0.data(as: PostModel.self)}
+    }
+    
+    static func fetchUserPosts(for userId: String) async throws -> [PostModel] {
+        let query = postsReference.order(by: "timestamp", descending: true).limit(to: 100)
+        let documents = try await query.getAllDocuments().documents
+        let posts = try documents.map { try $0.data(as: PostModel.self) }
+        return posts.filter { $0.authorId == userId }
     }
     
     // MARK: - Methods for the UserModel.
@@ -43,7 +52,7 @@ struct FirestoreService {
             updateData["profileImageUrl"] = profileImageUrl
         }
         let document = usersReference.document(user.id)
-        try await document.updateData(updateData)
+        try await document.updateDataAsync(updateData)
     }
     
     static func fetchUser(for uid: String) async throws -> UserModel {
@@ -60,6 +69,18 @@ extension DocumentReference {
                 continuation.resume()
             } catch {
                 continuation.resume(throwing: error)
+            }
+        }
+    }
+    
+    func updateDataAsync(_ fields: [AnyHashable : Any]) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            updateData(fields) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume()
             }
         }
     }

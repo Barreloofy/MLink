@@ -9,7 +9,6 @@ import SwiftUI
 
 struct PostView: View {
     let post: PostModel
-    let imageData: Data?
     
     var body: some View {
         VStack {
@@ -21,13 +20,17 @@ struct PostView: View {
                     .font(.callout)
                     .fontWeight(.thin)
             }
-            if let image = imageData, let uiImage = UIImage(data: image) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .frame(width: 300, height: 175)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .shadow(radius: 10)
-                    .padding()
+            if let stringUrl = post.imageUrl, let imageUrl = URL(string: stringUrl) {
+                AsyncImage(url: imageUrl) { image in
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(radius: 10)
+                        .padding()
+                } placeholder: {
+                    EmptyView()
+                }
             }
             Text(post.text)
                 .fontWeight(.medium)
@@ -42,6 +45,7 @@ struct PostView: View {
         }
         .padding()
         .frame(width: 350)
+        .frame(maxHeight: 623)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
@@ -50,13 +54,13 @@ struct PostView: View {
 #if DEBUG
 
 #Preview {
-    PostView(post: PostModel.testPost, imageData: nil)
+    PostView(post: PostModel.testPost)
 }
 
 struct TestView: View {
     var body: some View {
         List(0..<10) {_ in
-            PostView(post: PostModel.testPost, imageData: nil)
+            PostView(post: PostModel.testPost)
                 .listRowSeparator(.hidden)
         }
         .scrollContentBackground(.hidden)

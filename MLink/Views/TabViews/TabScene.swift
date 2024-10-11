@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TabScene: View {
-    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         TabView {
@@ -22,7 +21,7 @@ struct TabScene: View {
                 SettingsView()
             }
         }
-        .tint(colorScheme == .light ? .black : .white)
+        .tint(Color(red: 255 / 255, green: 69 / 255, blue: 0 / 255))
     }
 }
 

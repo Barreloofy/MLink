@@ -12,20 +12,13 @@ struct ProfileView: View {
     @EnvironmentObject private var userState: UserStateViewModel
     
     var body: some View {
-        ZStack {
-            ScrollView {
-                LazyVStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            viewModel.showEditPage.toggle()
-                        } label: {
-                            Text("Edit")
-                                .fontWeight(.heavy)
-                        }
-                        .buttonStyle(SimpleButtonStyle())
-                    }
-                    .padding()
+        NavigationStack {
+            ZStack {
+                Rectangle()
+                    .fill(.ultraThickMaterial)
+                    .opacity(0.25)
+                    .ignoresSafeArea()
+                ScrollView {
                     ImageView(imageData: viewModel.imageData)
                         .frame(width: 180, height: 180)
                         .clipShape(Circle())
@@ -40,20 +33,34 @@ struct ProfileView: View {
                     Text(viewModel.bioText)
                         .fontWeight(.medium)
                     Spacer()
-                    ForEach(viewModel.userPosts) { post in
-                        PostView(post: post, imageData: nil)
+                    LazyVStack {
+                        ForEach(viewModel.userPosts) { post in
+                            PostView(post: post)
+                        }
+                    }
+                }
+                if viewModel.isLoading {
+                    LoadingView()
+                }
+                if viewModel.showAlert {
+                    AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        viewModel.showEditPage.toggle()
+                    } label: {
+                        Text("Edit")
+                            .fontWeight(.heavy)
+                    }
+                    .buttonStyle(SimpleButtonStyle())
+                    .sheet(isPresented: $viewModel.showEditPage) {
+                        EditProfileView(viewModel: viewModel)
                     }
                 }
             }
-            if viewModel.isLoading {
-                LoadingView()
-            }
-            if viewModel.showAlert {
-                AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
-            }
-        }
-        .sheet(isPresented: $viewModel.showEditPage) {
-            EditProfileView(viewModel: viewModel)
+            .toolbarVisibility(viewModel.isLoading ? .hidden : .visible)
         }
         .onAppear {
             viewModel.uid = userState.currentUser?.id

@@ -14,6 +14,10 @@ struct PostForm: View {
     
     var body: some View {
         ZStack {
+            Rectangle()
+                .fill(.ultraThickMaterial)
+                .opacity(0.25)
+                .ignoresSafeArea()
             VStack {
                 HStack {
                     Text(userState.currentUser?.name ?? "Unknown User")
@@ -33,7 +37,7 @@ struct PostForm: View {
                     if let imageData = viewModel.imageData, let uiImage = UIImage(data: imageData) {
                         Image(uiImage: uiImage)
                             .resizable()
-                            .frame(width: 300, height: 175)
+                            .scaledToFit()
                             .clipShape(RoundedRectangle(cornerRadius: 10))
                             .shadow(radius: 10)
                     }

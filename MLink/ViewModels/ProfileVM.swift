@@ -82,7 +82,8 @@ final class ProfileViewModel: ObservableObject {
             guard userPosts.isEmpty else { return }
             do {
                 guard let uid = uid else { throw CustomError.expectationError("User is nil.") }
-                userPosts = try await FirestoreService.fetchPosts(for: uid)
+                userPosts = try await FirestoreService.fetchUserPosts(for: uid)
+                //userPosts = try await FirestoreService.fetchPosts(for: uid)
             } catch {
                 errorMessage = error.localizedDescription
                 showAlert = true
