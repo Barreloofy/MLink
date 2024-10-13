@@ -8,12 +8,13 @@
 import Foundation
 
 struct PostModel: Codable, Hashable, Identifiable {
-    var id: String
-    var authorId: String
-    var author: String
-    var timestamp = Date()
-    var text: String
-    var imageUrl: String?
+    let id: String
+    let authorId: String
+    let author: String
+    let timestamp: Date
+    let text: String
+    let imageUrl: String?
+    var likeCount = 0
     
     func timestampFormatter() -> String {
         let currentDate = Date()
@@ -33,12 +34,14 @@ struct PostModel: Codable, Hashable, Identifiable {
     
     init(
         id: String,
+        timestamp: Date = Date(),
         author: (authorId: String, authorName: String),
         content: (text: String, imageUrl: String?)
     ) {
         self.id = id
         self.authorId = author.authorId
         self.author = author.authorName
+        self.timestamp = timestamp
         self.text = content.text
         self.imageUrl = content.imageUrl
     }

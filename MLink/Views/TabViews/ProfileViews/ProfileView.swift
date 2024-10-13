@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     @EnvironmentObject private var userState: UserStateViewModel
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         NavigationStack {
@@ -35,8 +36,16 @@ struct ProfileView: View {
                     Spacer()
                     LazyVStack {
                         ForEach(viewModel.userPosts) { post in
-                            PostView(post: post)
+                            NavigationLink(value: post) {
+                                PostView(viewModel: PostViewViewModel(post: post)) {_ in}
+                            }
                         }
+                    }
+                }
+                .tint(colorScheme == .light ? .black : .white)
+                .navigationDestination(for: PostModel.self) { post in
+                    PostDetailView(post: post) { actionMessage in
+                        viewModel.actionManager(action: actionMessage)
                     }
                 }
                 if viewModel.isLoading {

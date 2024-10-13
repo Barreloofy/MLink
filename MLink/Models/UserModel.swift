@@ -8,7 +8,7 @@
 import Foundation
 
 struct UserModel: Codable, Identifiable {
-    var id: String
+    let id: String
     var name: String
     var biography: String?
     var profileImageUrl: String?

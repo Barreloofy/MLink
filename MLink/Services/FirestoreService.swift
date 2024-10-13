@@ -27,14 +27,55 @@ struct FirestoreService {
     static func fetchPosts(for userId: String) async throws -> [PostModel] {
         let query = postsReference.whereField("authorId", isEqualTo: userId)
         let documents = try await query.getAllDocuments().documents
-        return try documents.map { try $0.data(as: PostModel.self)}
+        return try documents.map { try $0.data(as: PostModel.self) }
     }
     
+    // Workaround, less efficient and not as capable.
     static func fetchUserPosts(for userId: String) async throws -> [PostModel] {
         let query = postsReference.order(by: "timestamp", descending: true).limit(to: 100)
         let documents = try await query.getAllDocuments().documents
         let posts = try documents.map { try $0.data(as: PostModel.self) }
         return posts.filter { $0.authorId == userId }
+    }
+    
+    static func updatePost(for postId: String, with newValue: Int) async throws {
+        let query = postsReference.document(postId)
+        try await query.updateDataAsync(["likeCount" : newValue])
+    }
+    
+    static func deletePost(for postId: String) async throws {
+        let query = postsReference.document(postId)
+        try await query.deleteDocument()
+    }
+    
+    // MARK: -- Methods for the PostModel subcollection: "Likes".
+    
+    static func fetchLikeStatus(userId: String, postId: String) async throws -> Bool {
+        let query = postsReference.document(postId).collection("Likes").document(userId)
+        return try await query.getOneDocument().exists
+    }
+    
+    static func likePost(userId: String, postId: String) async throws {
+        let document = postsReference.document(postId).collection("Likes").document(userId)
+        try await document.setDataAsync([:])
+    }
+    
+    static func unLikePost(userId: String, postId: String) async throws {
+        let query = postsReference.document(postId).collection("Likes").document(userId)
+        try await query.deleteDocument()
+    }
+    
+    // MARK: - Methods for the CommentModel.
+    
+    static func createComment(_ comment: CommentModel, postId: String) async throws {
+        let document = postsReference.document(postId).collection("Comments").document(comment.id)
+        try await document.setData(from: comment)
+    }
+    
+    static func fetchComments(for postId: String) async throws -> [CommentModel] {
+        let query = postsReference.document(postId).collection("Comments")
+        let documents = try await query.getAllDocuments().documents
+        return try documents.map { try $0.data(as: CommentModel.self) }
     }
     
     // MARK: - Methods for the UserModel.
@@ -73,6 +114,18 @@ extension DocumentReference {
         }
     }
     
+    func setDataAsync(_ documentData: [String : Any]) async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            setData(documentData) { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
     func updateDataAsync(_ fields: [AnyHashable : Any]) async throws {
         return try await withCheckedThrowingContinuation { continuation in
             updateData(fields) { error in
@@ -81,6 +134,30 @@ extension DocumentReference {
                     return
                 }
                 continuation.resume()
+            }
+        }
+    }
+    
+    func deleteDocument() async throws {
+        return try await withCheckedThrowingContinuation { continuation in
+            delete { error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
+    func getOneDocument() async throws -> DocumentSnapshot {
+        return try await withCheckedThrowingContinuation { continuation in
+            getDocument { snapshot, error in
+                guard let snapshot, error == nil else {
+                    continuation.resume(throwing: error!)
+                    return
+                }
+                continuation.resume(returning: snapshot)
             }
         }
     }

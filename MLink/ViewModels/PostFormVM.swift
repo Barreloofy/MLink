@@ -58,7 +58,7 @@ final class PostFormViewModel: ObservableObject {
                 if let imageData = imageData {
                     url = try await StorageService.uploadImageData(imageData, to: "postImages/\(uid)")
                 }
-                try await FirestoreService.createPost(PostModel(id: uid,author: (authorId: user.id, authorName: user.name), content: (text: text, imageUrl: url)))
+                try await FirestoreService.createPost(PostModel(id: uid, author: (authorId: user.id, authorName: user.name), content: (text: text, imageUrl: url)))
                 isLoading = false
             } catch {
                 errorMessage = error.localizedDescription

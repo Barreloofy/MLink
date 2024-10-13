@@ -23,11 +23,18 @@ struct HomeView: View {
                             .font(.title)
                             .fontWeight(.heavy)
                     } else {
-                        ScrollView {
-                            LazyVStack {
-                                ForEach(viewModel.posts) { post in
-                                    PostView(post: post)
-                                }
+                        List(viewModel.posts) { post in
+                            ZStack {
+                                NavigationLink(value: post) {}
+                                PostView(viewModel: PostViewViewModel(post: post)) {_ in}
+                            }
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                        }
+                        .scrollContentBackground(.hidden)
+                        .navigationDestination(for: PostModel.self) { post in
+                            PostDetailView(post: post) { actionMessage in
+                                viewModel.actionManager(action: actionMessage)
                             }
                         }
                     }
