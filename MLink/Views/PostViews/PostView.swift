@@ -8,86 +8,54 @@
 import SwiftUI
 
 struct PostView: View {
-    @StateObject var viewModel: PostViewViewModel
-    @EnvironmentObject private var userState: UserStateViewModel
-    @Environment(\.colorScheme) private var colorScheme
-    var actionMessage: (ActionModel) -> Void
+    let post: PostModel
     
     var body: some View {
         VStack {
+            
             HStack {
-                Text(viewModel.post.author)
-                    .fontWeight(.heavy)
-                Spacer()
-                Text(viewModel.post.timestampFormatter())
-                    .font(.callout)
-                    .fontWeight(.thin)
-            }
-            viewModel.loadImage(from: viewModel.post.imageUrl)
-            HStack {
-                Text(viewModel.post.text)
+                Text(post.author)
                     .fontWeight(.medium)
+                Spacer()
+                Text(post.timestampFormatter())
+                    .fontWeight(.light)
+            }
+            
+            URLImageView(url: post.imageUrl)
+            
+            HStack {
+                Text(post.text)
+                    .fontWeight(.semibold)
                     .multilineTextAlignment(.leading)
                 Spacer()
             }
+            
             Spacer()
+            
             HStack {
-                Button {
-                    viewModel.likeAction(userId: userState.currentUser?.id)
-                } label: {
-                    Image(systemName: viewModel.isLiked ? "heart.fill" : "heart")
-                        .tint(viewModel.isLiked ? .swiftOrange : colorScheme == .light ? .black : .white)
+                Button {} label: {
+                    Image(systemName: "heart")
                 }
-                if viewModel.post.likeCount != 0 {
-                    Text("\(viewModel.post.likeCount)")
+                if post.likeCount > 0 {
+                    Text("\(post.likeCount)")
                 }
                 Button {} label: {
                     Image(systemName: "bubble")
                 }
                 Spacer()
-                if let uid = userState.currentUser?.id, uid == viewModel.post.authorId {
-                    Button {
-                        actionMessage(ActionModel(actionType: .delete, forItem: viewModel.post.id, fromUser: uid))
-                    } label: {
-                        Image(systemName: "trash")
-                    }
+                Button {} label: {
+                    Image(systemName: "trash")
                 }
             }
-            .buttonStyle(BorderlessButtonStyle())
-            .fontWeight(.bold)
-            .tint(colorScheme == .light ? .black : .white)
         }
         .padding()
         .frame(width: 350)
         .frame(maxHeight: 623)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .onAppear {
-            viewModel.fetchLikeStatus(userId: userState.currentUser?.id, postId: viewModel.post.id)
-        }
     }
 }
-
-#if DEBUG
 
 #Preview {
-    PostView(viewModel: PostViewViewModel(post: PostModel.testPost), actionMessage: {_ in})
-        .environmentObject(UserStateViewModel())
+    PostView(post: PostModel.testPost)
 }
-
-struct TestView: View {
-    var body: some View {
-        List(0..<10) {_ in
-            PostView(viewModel: PostViewViewModel(post: PostModel.testPost), actionMessage: {_ in})
-                .listRowSeparator(.hidden)
-        }
-        .scrollContentBackground(.hidden)
-    }
-}
-
-#Preview("TestView") {
-    TestView()
-        .environmentObject(UserStateViewModel())
-}
-
-#endif

@@ -37,16 +37,17 @@ struct ProfileView: View {
                     LazyVStack {
                         ForEach(viewModel.userPosts) { post in
                             NavigationLink(value: post) {
-                                PostView(viewModel: PostViewViewModel(post: post)) {_ in}
+                                PostView(post: post)
+                                    .onAppear {
+                                        viewModel.isLoading = false
+                                    }
                             }
                         }
                     }
                 }
                 .tint(colorScheme == .light ? .black : .white)
                 .navigationDestination(for: PostModel.self) { post in
-                    PostDetailView(post: post) { actionMessage in
-                        viewModel.actionManager(action: actionMessage)
-                    }
+                    PostDetailView(post: post)
                 }
                 if viewModel.isLoading {
                     LoadingView()
@@ -72,8 +73,11 @@ struct ProfileView: View {
             .toolbarVisibility(viewModel.isLoading ? .hidden : .visible)
         }
         .onAppear {
-            viewModel.uid = userState.currentUser?.id
-            viewModel.onAppear()
+            viewModel.loadData(for: userState.currentUser?.id)
+        }
+        .refreshable {
+            viewModel.loadData(for: userState.currentUser?.id)
+            viewModel.isLoading = false
         }
     }
 }

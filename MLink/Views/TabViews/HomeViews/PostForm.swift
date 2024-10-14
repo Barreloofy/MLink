@@ -11,6 +11,7 @@ import PhotosUI
 struct PostForm: View {
     @StateObject private var viewModel = PostFormViewModel()
     @EnvironmentObject private var userState: UserStateViewModel
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         ZStack {
@@ -34,13 +35,15 @@ struct PostForm: View {
                         .onChange(of: viewModel.selectedItem) {
                             viewModel.loadImage()
                         }
-                    if let imageData = viewModel.imageData, let uiImage = UIImage(data: imageData) {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                            .shadow(radius: 10)
-                    }
+                    ImageView(imageData: viewModel.imageData, placeholder: false)
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(radius: 10)
+                        .onLongPressGesture {
+                            // Optimization needed; alert view is called.
+                            viewModel.selectedItem = nil
+                            viewModel.imageData = nil
+                        }
                     ZStack {
                         if viewModel.text.isEmpty {
                             TextEditor(text: .constant("Compose..."))
@@ -72,8 +75,9 @@ struct PostForm: View {
                 .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
                 Button {
                     viewModel.createPost(user: userState.currentUser)
+                    dismiss()
                 } label: {
-                    Text("Save")
+                    Text("Post")
                         .fontWeight(.heavy)
                 }
                 .buttonStyle(SimpleButtonStyle())

@@ -8,27 +8,38 @@
 import SwiftUI
 
 struct PostDetailView: View {
+    @StateObject private var viewModel = PostDetailViewModel()
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
     let post: PostModel
-    var actionMessage: (ActionModel) -> Void
-    @State private var postComments = [CommentModel]()
     
     var body: some View {
-        ScrollView {
-            PostView(viewModel: PostViewViewModel(post: post), actionMessage: actionMessage)
-            Divider()
-                .frame(height: 3)
-                .background(Color.gray)
-                .padding(10)
-            CommentForm(post: post)
-            LazyVStack {
-                ForEach(postComments) { comment in
-                    CommentView(comment: comment)
+        
+        ZStack {
+            ScrollView {
+                PostView(post: post)
+                Divider()
+                    .frame(height: 3)
+                    .background(Color.gray)
+                    .padding(10)
+                CommentForm(post: post) { action in
+                    viewModel.actionProcess(action: action, postId: post.id)
+                }
+                LazyVStack {
+                    ForEach(viewModel.comments) { comment in
+                        CommentView(comment: comment)
+                    }
                 }
             }
+            .foregroundStyle(colorScheme == .light ? .black : .white)
+            .background(.ultraThickMaterial.opacity(0.25))
+            .navigationBarBackButtonHidden()
+            
+            if viewModel.showAlert {
+                AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
+            }
         }
-        .background(.ultraThickMaterial.opacity(0.25))
-        .navigationBarBackButtonHidden()
+        
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -39,20 +50,17 @@ struct PostDetailView: View {
                 }
             }
         }
+        
         .onAppear {
-            Task {
-                postComments = try await FirestoreService.fetchComments(for: post.id)
-            }
+            viewModel.fetchComments(for: post.id)
         }
         .refreshable {
-            Task {
-                postComments = try await FirestoreService.fetchComments(for: post.id)
-            }
+            viewModel.fetchComments(for: post.id)
         }
     }
 }
 
 #Preview {
-    PostDetailView(post: PostModel.testPost) {_ in}
+    PostDetailView(post: PostModel.testPost)
         .environmentObject(UserStateViewModel())
 }

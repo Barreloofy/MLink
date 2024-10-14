@@ -32,19 +32,6 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
-    func actionManager(action: ActionModel) {
-        switch action.actionType {
-            case .delete:
-            if let index = posts.firstIndex(where: { $0.id == action.forItem && $0.authorId == action.fromUser}) {
-                deletePost(for: action.forItem, at: index)
-            }
-            case .favorite:
-            break
-            case .unFavorite:
-            break
-        }
-    }
-    
     func deletePost(for uid: String, at index: Int) {
         Task {
             do {

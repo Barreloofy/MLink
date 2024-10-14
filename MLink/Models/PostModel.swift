@@ -14,7 +14,11 @@ struct PostModel: Codable, Hashable, Identifiable {
     let timestamp: Date
     let text: String
     let imageUrl: String?
-    var likeCount = 0
+    var likeCount = 0 {
+        didSet {
+            likeCount = likeCount < 0 ? 0 : self.likeCount
+        }
+    }
     
     func timestampFormatter() -> String {
         let currentDate = Date()

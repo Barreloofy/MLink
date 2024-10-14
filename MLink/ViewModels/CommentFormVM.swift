@@ -11,14 +11,21 @@ import Foundation
 final class CommentFormViewModel: ObservableObject {
     @Published var text = ""
     
-    func createComment(user: UserModel?, postId: String) {
+    func EnforceLength() {
+        if text.count > 125 {
+            text = String(text.prefix(125))
+        }
+    }
+    
+    func createComment(user: UserModel?, postId: String, action: ((ActionModel) -> Void)?) {
         Task {
             do {
                 guard let user = user else { throw CustomError.expectationError("User is nil.")}
                 try await FirestoreService.createComment(CommentModel(author: (id: user.id, name: user.name), content: text), postId: postId)
                 text = ""
+                action?(ActionModel(type: .update, content: ""))
             } catch {
-                print(error.localizedDescription)
+                action?(ActionModel(type: .error, content: error.localizedDescription))
             }
         }
     }

@@ -54,7 +54,7 @@ struct EditProfileView: View {
                     .frame(minHeight: 100, maxHeight: 100)
                     .padding(10)
                     Button {
-                        viewModel.saveEdit()
+                        //viewModel.saveEdit()
                     } label: {
                         Text("Save")
                             .fontWeight(.heavy)

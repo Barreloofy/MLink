@@ -21,10 +21,11 @@ struct TabScene: View {
                 SettingsView()
             }
         }
-        .tint(Color(red: 255 / 255, green: 69 / 255, blue: 0 / 255))
+        .tint(.swiftOrange)
     }
 }
 
 #Preview {
     TabScene()
+        .environmentObject(UserStateViewModel())
 }

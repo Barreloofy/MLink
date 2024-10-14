@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         NavigationStack {
@@ -23,19 +24,18 @@ struct HomeView: View {
                             .font(.title)
                             .fontWeight(.heavy)
                     } else {
-                        List(viewModel.posts) { post in
-                            ZStack {
-                                NavigationLink(value: post) {}
-                                PostView(viewModel: PostViewViewModel(post: post)) {_ in}
+                        ScrollView {
+                            LazyVStack {
+                                ForEach(viewModel.posts) { post in
+                                    NavigationLink(value: post) {
+                                        PostView(post: post)
+                                    }
+                                }
                             }
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
                         }
-                        .scrollContentBackground(.hidden)
+                        .tint(colorScheme == .light ? .black : .white)
                         .navigationDestination(for: PostModel.self) { post in
-                            PostDetailView(post: post) { actionMessage in
-                                viewModel.actionManager(action: actionMessage)
-                            }
+                            PostDetailView(post: post)
                         }
                     }
                 }

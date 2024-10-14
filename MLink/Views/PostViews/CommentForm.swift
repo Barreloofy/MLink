@@ -11,9 +11,12 @@ struct CommentForm: View {
     @StateObject private var viewModel = CommentFormViewModel()
     @EnvironmentObject private var userState: UserStateViewModel
     let post: PostModel
+    var action: ((ActionModel) -> Void)?
     
     var body: some View {
+        
         VStack {
+            
             ZStack {
                 if viewModel.text.isEmpty {
                     TextEditor(text: .constant("Comment.."))
@@ -21,15 +24,14 @@ struct CommentForm: View {
                 }
                 TextEditor(text: $viewModel.text)
                     .onChange(of: viewModel.text) {
-                        if viewModel.text.count > 125 {
-                            viewModel.text = String(viewModel.text.prefix(125))
-                        }
+                        viewModel.EnforceLength()
                     }
             }
             .padding(5)
             .scrollContentBackground(.hidden)
+            
             Button {
-                viewModel.createComment(user: userState.currentUser, postId: post.id)
+                viewModel.createComment(user: userState.currentUser, postId: post.id, action: action)
             } label: {
                 Text("Comment")
                     .fontWeight(.heavy)
@@ -39,7 +41,7 @@ struct CommentForm: View {
         }
         .background(.ultraThinMaterial)
         .frame(width: 340)
-        .frame(minHeight: 85)
+        .frame(minHeight: 100)
         .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }

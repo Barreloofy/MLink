@@ -73,7 +73,7 @@ struct FirestoreService {
     }
     
     static func fetchComments(for postId: String) async throws -> [CommentModel] {
-        let query = postsReference.document(postId).collection("Comments")
+        let query = postsReference.document(postId).collection("Comments").order(by: "timestamp", descending: true)
         let documents = try await query.getAllDocuments().documents
         return try documents.map { try $0.data(as: CommentModel.self) }
     }
