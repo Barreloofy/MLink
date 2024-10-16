@@ -11,7 +11,7 @@ import PhotosUI
 
 @MainActor
 final class ProfileViewModel: ObservableObject {
-    var userPosts = [PostModel]()
+    @Published var userPosts = [PostModel]()
     @Published var username = ""
     @Published var bioText = ""
     @Published var selectedItem: PhotosPickerItem?
@@ -20,6 +20,7 @@ final class ProfileViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var showAlert = false { didSet { errorMessage = showAlert ? errorMessage : "" } }
     var errorMessage = ""
+    private var uid = ""
     
     func enforceLength(for property: inout String, maxLength: Int) {
         if property.count > maxLength {
@@ -37,7 +38,7 @@ final class ProfileViewModel: ObservableObject {
     }
     // MARK: - Wrapped FirestoreService methods.
     
-    func fetchUser(_ userId: String) throws {
+    private func fetchUser(_ userId: String) throws {
         Task {
             let user = try await FirestoreService.fetchUser(for: userId)
             username = user.name
@@ -47,13 +48,13 @@ final class ProfileViewModel: ObservableObject {
         }
     }
     
-    func fetchUserPosts(_ userId: String) throws {
+    private func fetchUserPosts(_ userId: String) throws {
         Task {
             userPosts = try await FirestoreService.fetchUserPosts(for: userId)
         }
     }
     
-    func updateUser(_ userId: String) throws {
+    private func updateUser(_ userId: String) throws {
         Task {
             var imageUrl: String?
             if let imageData = imageData {
@@ -63,12 +64,32 @@ final class ProfileViewModel: ObservableObject {
             try await FirestoreService.updateUser(UserModel(userId, username, bioText, imageUrl))
         }
     }
+    
+    func actionProcess(_ action: ActionType) {
+        switch action {
+            case .update:
+            try? fetchUserPosts(uid)
+            case .error(let message):
+            errorMessage = message
+            showAlert = true
+            @unknown default:
+            break
+        }
+    }
     // MARK: - convenience methods.
+    
+    func LoadingTime() {
+        Task {
+            try? await Task.sleep(nanoseconds: 1_000_000_000 / 2)
+            isLoading = false
+        }
+    }
     
     func loadData(for userId: String?) {
         do {
             isLoading = true
             guard let userId = userId else { throw CustomError.expectationError("User is nil")}
+            uid = userId
             try fetchUser(userId)
             try fetchUserPosts(userId)
         } catch {

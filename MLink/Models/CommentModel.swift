@@ -9,14 +9,16 @@ import Foundation
 
 struct CommentModel: Codable, Identifiable {
     let id: String
+    let postId: String
     let authorId: String
     let author: String
     let timestamp: Date
     let content: String
     var likeCount = 0
     
-    init(author: (id: String, name: String), content: String) {
+    init(postId: String ,author: (id: String, name: String), content: String) {
         self.id = UUID().uuidString
+        self.postId = postId
         self.authorId = author.id
         self.author = author.name
         self.timestamp = Date()
@@ -41,5 +43,5 @@ struct CommentModel: Codable, Identifiable {
 }
 
 extension CommentModel {
-    static let testComment = CommentModel(author: (UUID().uuidString, "James"), content: "Phasellus fermentum malesuada phasellus netus dictum aenean placerat egestas amet.")
+    static let testComment = CommentModel(postId: UUID().uuidString, author: (UUID().uuidString, "James"), content: "Phasellus fermentum malesuada phasellus netus dictum aenean placerat egestas amet.")
 }

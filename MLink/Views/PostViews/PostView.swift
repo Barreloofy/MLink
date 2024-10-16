@@ -8,7 +8,10 @@
 import SwiftUI
 
 struct PostView: View {
+    @EnvironmentObject private var userState: UserStateViewModel
+    @StateObject private var viewModel = PostViewViewModel()
     let post: PostModel
+    var action: ((ActionType) -> Void)?
     
     var body: some View {
         VStack {
@@ -33,18 +36,41 @@ struct PostView: View {
             Spacer()
             
             HStack {
-                Button {} label: {
-                    Image(systemName: "heart")
+                
+                Button {
+                    viewModel.likeAction(post: post, userId: userState.currentUser?.id, action: action)
+                } label: {
+                    if viewModel.isLiked {
+                        Image(systemName: "heart.fill")
+                            .tint(.swiftOrange)
+                    } else {
+                        Image(systemName: "heart")
+                    }
                 }
                 if post.likeCount > 0 {
                     Text("\(post.likeCount)")
                 }
+                
                 Button {} label: {
                     Image(systemName: "bubble")
                 }
+                
                 Spacer()
-                Button {} label: {
-                    Image(systemName: "trash")
+                
+                if post.authorId == userState.currentUser?.id {
+                    Button {
+                        viewModel.showAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .alert("Delete this post?", isPresented: $viewModel.showAlert) {
+                        Button("Cancel") {
+                            viewModel.showAlert = false
+                        }
+                        Button("Delete") {
+                            viewModel.deletePost(for: post.id, action: action)
+                        }
+                    }
                 }
             }
         }
@@ -53,9 +79,14 @@ struct PostView: View {
         .frame(maxHeight: 623)
         .background(.ultraThinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        
+        .onAppear {
+            viewModel.fetchLikeStatus(post: post, userId: userState.currentUser?.id, action: action)
+        }
     }
 }
 
 #Preview {
     PostView(post: PostModel.testPost)
+        .environmentObject(UserStateViewModel())
 }

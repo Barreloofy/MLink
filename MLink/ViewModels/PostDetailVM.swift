@@ -13,13 +13,15 @@ final class PostDetailViewModel: ObservableObject {
     @Published var showAlert = false
     var errorMessage = ""
     
-    func actionProcess(action: ActionModel, postId: String) {
-        switch action.type {
-            case .error:
-            errorMessage = action.content
+    func actionProcess(action: ActionType, postId: String) {
+        switch action {
+            case .error(let message):
+            errorMessage = message
             showAlert = true
             case .update:
             fetchComments(for: postId)
+            @unknown default:
+            break
         }
     }
     

@@ -27,7 +27,9 @@ struct PostDetailView: View {
                 }
                 LazyVStack {
                     ForEach(viewModel.comments) { comment in
-                        CommentView(comment: comment)
+                        CommentView(comment: comment) { action in
+                            viewModel.actionProcess(action: action, postId: post.id)
+                        }
                     }
                 }
             }

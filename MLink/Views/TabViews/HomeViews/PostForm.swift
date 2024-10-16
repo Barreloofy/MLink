@@ -11,15 +11,19 @@ import PhotosUI
 struct PostForm: View {
     @StateObject private var viewModel = PostFormViewModel()
     @EnvironmentObject private var userState: UserStateViewModel
-    @Environment(\.dismiss) private var dismiss
+    var action: ((ActionType) -> Void)?
     
     var body: some View {
+        
         ZStack {
+            
             Rectangle()
                 .fill(.ultraThickMaterial)
                 .opacity(0.25)
                 .ignoresSafeArea()
+            
             VStack {
+                
                 HStack {
                     Text(userState.currentUser?.name ?? "Unknown User")
                         .font(.title)
@@ -27,7 +31,9 @@ struct PostForm: View {
                         .padding(EdgeInsets(top: 5, leading: 20, bottom: 0, trailing: 0))
                     Spacer()
                 }
+                
                 VStack {
+                    
                     PhotosPicker("Add Image", selection: $viewModel.selectedItem, matching: .images)
                         .fontWeight(.heavy)
                         .buttonStyle(SimpleButtonStyle())
@@ -35,15 +41,16 @@ struct PostForm: View {
                         .onChange(of: viewModel.selectedItem) {
                             viewModel.loadImage()
                         }
+                    
                     ImageView(imageData: viewModel.imageData, placeholder: false)
                         .scaledToFit()
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .shadow(radius: 10)
                         .onLongPressGesture {
-                            // Optimization needed; alert view is called.
                             viewModel.selectedItem = nil
                             viewModel.imageData = nil
                         }
+                    
                     ZStack {
                         if viewModel.text.isEmpty {
                             TextEditor(text: .constant("Compose..."))
@@ -58,6 +65,7 @@ struct PostForm: View {
                     }
                     .scrollContentBackground(.hidden)
                     .padding()
+                    
                     HStack {
                         Text("\(viewModel.text.count)")
                             .fontWeight(.heavy)
@@ -73,9 +81,9 @@ struct PostForm: View {
                 .background(.ultraThinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
+                
                 Button {
-                    viewModel.createPost(user: userState.currentUser)
-                    dismiss()
+                    viewModel.createPost(user: userState.currentUser, action)
                 } label: {
                     Text("Post")
                         .fontWeight(.heavy)
@@ -83,6 +91,7 @@ struct PostForm: View {
                 .buttonStyle(SimpleButtonStyle())
                 Spacer()
             }
+            
             if viewModel.showAlert {
                 AlertView(isPresented: $viewModel.showAlert, message: viewModel.errorMessage)
             }

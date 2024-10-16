@@ -11,7 +11,7 @@ struct CommentForm: View {
     @StateObject private var viewModel = CommentFormViewModel()
     @EnvironmentObject private var userState: UserStateViewModel
     let post: PostModel
-    var action: ((ActionModel) -> Void)?
+    var action: ((ActionType) -> Void)?
     
     var body: some View {
         

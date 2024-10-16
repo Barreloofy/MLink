@@ -48,27 +48,35 @@ struct FirestoreService {
         try await query.deleteDocument()
     }
     
-    // MARK: -- Methods for the PostModel subcollection: "Likes".
+    // MARK: -- Methods for the Like feature.
     
-    static func fetchLikeStatus(userId: String, postId: String) async throws -> Bool {
-        let query = postsReference.document(postId).collection("Likes").document(userId)
+    static func queryBuilder(userId: String, postId: String, commentId: String?) -> DocumentReference {
+        if let commentId = commentId {
+            return postsReference.document(postId).collection("Comments").document(commentId).collection("Likes").document(userId)
+        } else {
+            return postsReference.document(postId).collection("Likes").document(userId)
+        }
+    }
+    
+    static func fetchLikeStatus(userId: String, postId: String, commentId: String?) async throws -> Bool {
+        let query = queryBuilder(userId: userId, postId: postId, commentId: commentId)
         return try await query.getOneDocument().exists
     }
     
-    static func likePost(userId: String, postId: String) async throws {
-        let document = postsReference.document(postId).collection("Likes").document(userId)
+    static func likePost(userId: String, postId: String, commentId: String?) async throws {
+        let document = queryBuilder(userId: userId, postId: postId, commentId: commentId)
         try await document.setDataAsync([:])
     }
     
-    static func unLikePost(userId: String, postId: String) async throws {
-        let query = postsReference.document(postId).collection("Likes").document(userId)
+    static func unlikePost(userId: String, postId: String, commentId: String?) async throws {
+        let query = queryBuilder(userId: userId, postId: postId, commentId: commentId)
         try await query.deleteDocument()
     }
     
     // MARK: - Methods for the CommentModel.
     
-    static func createComment(_ comment: CommentModel, postId: String) async throws {
-        let document = postsReference.document(postId).collection("Comments").document(comment.id)
+    static func createComment(_ comment: CommentModel) async throws {
+        let document = postsReference.document(comment.postId).collection("Comments").document(comment.id)
         try await document.setData(from: comment)
     }
     
@@ -76,6 +84,16 @@ struct FirestoreService {
         let query = postsReference.document(postId).collection("Comments").order(by: "timestamp", descending: true)
         let documents = try await query.getAllDocuments().documents
         return try documents.map { try $0.data(as: CommentModel.self) }
+    }
+    
+    static func deleteComment(commentId: String, postId: String) async throws {
+        let query = postsReference.document(postId).collection("Comments").document(commentId)
+        try await query.deleteDocument()
+    }
+    
+    static func updateComment(commentId: String, postId: String, with newValue: Int) async throws {
+        let query = postsReference.document(postId).collection("Comments").document(commentId)
+        try await query.updateDataAsync(["likeCount" : newValue])
     }
     
     // MARK: - Methods for the UserModel.

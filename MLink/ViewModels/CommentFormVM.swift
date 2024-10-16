@@ -17,15 +17,15 @@ final class CommentFormViewModel: ObservableObject {
         }
     }
     
-    func createComment(user: UserModel?, postId: String, action: ((ActionModel) -> Void)?) {
+    func createComment(user: UserModel?, postId: String, action: ((ActionType) -> Void)?) {
         Task {
             do {
                 guard let user = user else { throw CustomError.expectationError("User is nil.")}
-                try await FirestoreService.createComment(CommentModel(author: (id: user.id, name: user.name), content: text), postId: postId)
+                try await FirestoreService.createComment(CommentModel(postId: postId, author: (id: user.id, name: user.name), content: text))
                 text = ""
-                action?(ActionModel(type: .update, content: ""))
+                action?(ActionType.update)
             } catch {
-                action?(ActionModel(type: .error, content: error.localizedDescription))
+                action?(ActionType.error(error.localizedDescription))
             }
         }
     }

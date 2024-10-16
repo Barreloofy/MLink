@@ -19,7 +19,7 @@ struct HomeView: View {
                     .opacity(0.25)
                     .ignoresSafeArea()
                 Group {
-                    if viewModel.posts.isEmpty {
+                    if viewModel.posts.isEmpty && viewModel.isLoading == false {
                         Text("No post's yet")
                             .font(.title)
                             .fontWeight(.heavy)
@@ -28,7 +28,9 @@ struct HomeView: View {
                             LazyVStack {
                                 ForEach(viewModel.posts) { post in
                                     NavigationLink(value: post) {
-                                        PostView(post: post)
+                                        PostView(post: post) { action in
+                                            viewModel.actionProcess(action)
+                                        }
                                     }
                                 }
                             }
@@ -56,17 +58,19 @@ struct HomeView: View {
                     }
                     .buttonStyle(SimpleButtonStyle())
                     .sheet(isPresented: $viewModel.showSheet) {
-                        PostForm()
+                        PostForm() { action in
+                            viewModel.actionProcess(action)
+                        }
                     }
                 }
             }
             .toolbarVisibility(viewModel.isLoading ? .hidden : .visible)
         }
         .onAppear {
-            viewModel.fetchAllPosts(refreshable: false)
+            viewModel.fetchPostsOnAppear()
         }
         .refreshable {
-            viewModel.fetchAllPosts(refreshable: true)
+            viewModel.refreshPosts()
         }
     }
 }

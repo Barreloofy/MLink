@@ -15,7 +15,6 @@ final class PostFormViewModel: ObservableObject {
     @Published var selectedItem: PhotosPickerItem?
     @Published var imageData: Data?
     @Published var indicatorColor = Color.gray
-    @Published var isLoading = false
     @Published var showAlert = false
     var errorMessage = ""
     
@@ -39,7 +38,8 @@ final class PostFormViewModel: ObservableObject {
     
     func loadImage() {
         Task {
-            if let data = try? await selectedItem?.loadTransferable(type: Data.self) {
+            guard selectedItem != nil else { return }
+            if let data = try await selectedItem?.loadTransferable(type: Data.self) {
                 imageData = data
             } else {
                 errorMessage = "Failed to load image."
@@ -48,9 +48,8 @@ final class PostFormViewModel: ObservableObject {
         }
     }
     
-    func createPost(user: UserModel?) {
+    func createPost(user: UserModel?,_ action: ((ActionType) -> Void)?) {
         Task {
-            isLoading = true
             do {
                 guard let user = user else { throw CustomError.expectationError("User is nil.") }
                 let uid = UUID().uuidString
@@ -59,11 +58,10 @@ final class PostFormViewModel: ObservableObject {
                     url = try await StorageService.uploadImageData(imageData, to: "postImages/\(uid)")
                 }
                 try await FirestoreService.createPost(PostModel(id: uid, author: (authorId: user.id, authorName: user.name), content: (text: text, imageUrl: url)))
-                isLoading = false
+                action?(ActionType.update)
             } catch {
                 errorMessage = error.localizedDescription
                 showAlert = true
-                isLoading = false
             }
         }
     }

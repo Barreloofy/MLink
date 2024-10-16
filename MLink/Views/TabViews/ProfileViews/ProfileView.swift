@@ -37,10 +37,9 @@ struct ProfileView: View {
                     LazyVStack {
                         ForEach(viewModel.userPosts) { post in
                             NavigationLink(value: post) {
-                                PostView(post: post)
-                                    .onAppear {
-                                        viewModel.isLoading = false
-                                    }
+                                PostView(post: post) { action in
+                                    viewModel.actionProcess(action)
+                                }
                             }
                         }
                     }
@@ -74,6 +73,7 @@ struct ProfileView: View {
         }
         .onAppear {
             viewModel.loadData(for: userState.currentUser?.id)
+            viewModel.LoadingTime()
         }
         .refreshable {
             viewModel.loadData(for: userState.currentUser?.id)
