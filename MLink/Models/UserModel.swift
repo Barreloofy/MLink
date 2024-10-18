@@ -19,9 +19,4 @@ struct UserModel: Codable, Identifiable {
         self.biography = biography
         self.profileImageUrl = profileImageUrl
     }
-    
-    init() {
-        id = ""
-        name = ""
-    }
 }

@@ -36,7 +36,6 @@ final class ProfileViewModel: ObservableObject {
             }
         }
     }
-    // MARK: - Wrapped FirestoreService methods.
     
     private func fetchUser(_ userId: String) throws {
         Task {

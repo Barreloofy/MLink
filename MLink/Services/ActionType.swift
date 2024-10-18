@@ -7,6 +7,7 @@
 
 import Foundation
 
+// Used for callbacks between parent and child views.
 enum ActionType {
     case error(String)
     case update

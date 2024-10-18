@@ -63,12 +63,12 @@ struct FirestoreService {
         return try await query.getOneDocument().exists
     }
     
-    static func likePost(userId: String, postId: String, commentId: String?) async throws {
+    static func likeItem(userId: String, postId: String, commentId: String?) async throws {
         let document = queryBuilder(userId: userId, postId: postId, commentId: commentId)
         try await document.setDataAsync([:])
     }
     
-    static func unlikePost(userId: String, postId: String, commentId: String?) async throws {
+    static func unlikeItem(userId: String, postId: String, commentId: String?) async throws {
         let query = queryBuilder(userId: userId, postId: postId, commentId: commentId)
         try await query.deleteDocument()
     }

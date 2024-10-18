@@ -39,11 +39,11 @@ final class PostViewViewModel: ObservableObject {
             do {
                 guard let userId = userId else { throw CustomError.expectationError("User is nil.") }
                 if isLiked {
-                    try await FirestoreService.unlikePost(userId: userId, postId: post.id, commentId: nil)
+                    try await FirestoreService.unlikeItem(userId: userId, postId: post.id, commentId: nil)
                     try await FirestoreService.updatePost(for: post.id, with: post.likeCount - 1)
                     isLiked = false
                 } else {
-                    try await FirestoreService.likePost(userId: userId, postId: post.id, commentId: nil)
+                    try await FirestoreService.likeItem(userId: userId, postId: post.id, commentId: nil)
                     try await FirestoreService.updatePost(for: post.id, with: post.likeCount + 1)
                     isLiked = true
                 }

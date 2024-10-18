@@ -42,6 +42,8 @@ struct CommentModel: Codable, Identifiable {
     }
 }
 
+#if DEBUG
 extension CommentModel {
     static let testComment = CommentModel(postId: UUID().uuidString, author: (UUID().uuidString, "James"), content: "Phasellus fermentum malesuada phasellus netus dictum aenean placerat egestas amet.")
 }
+#endif

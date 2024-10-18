@@ -25,8 +25,6 @@ final class PostDetailViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Wrapped FirestoreService methods.
-    
     func fetchComments(for postId: String) {
         Task {
             do {
