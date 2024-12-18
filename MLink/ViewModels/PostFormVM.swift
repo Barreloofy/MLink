@@ -51,7 +51,7 @@ final class PostFormViewModel: ObservableObject {
     func createPost(user: UserModel?,_ action: ((ActionType) -> Void)?) {
         Task {
             do {
-                guard let user = user else { throw CustomError.expectationError("User is nil.") }
+                guard let user = user else { throw CustomError.expectationError() }
                 let uid = UUID().uuidString
                 var url: String?
                 if let imageData = imageData {

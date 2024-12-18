@@ -26,7 +26,7 @@ final class CommentViewViewModel: ObservableObject {
     func fetchIsLiked(comment: CommentModel, userId: String?, action: ((ActionType) -> Void)?) {
         Task {
             do {
-                guard let userId = userId else { throw CustomError.expectationError("User is nil.") }
+                guard let userId = userId else { throw CustomError.expectationError() }
                 isLiked = try await FirestoreService.fetchLikeStatus(userId: userId, postId: comment.postId, commentId: comment.id)
             } catch {
                 action?(ActionType.error(error.localizedDescription))
@@ -37,7 +37,7 @@ final class CommentViewViewModel: ObservableObject {
     func likeAction(comment: CommentModel, userId: String?, action: ((ActionType) -> Void)?) {
         Task {
             do {
-                guard let userId = userId else { throw CustomError.expectationError("User is nil.") }
+                guard let userId = userId else { throw CustomError.expectationError() }
                 if isLiked {
                     try await FirestoreService.unlikeItem(userId: userId, postId: comment.postId, commentId: comment.id)
                     try await FirestoreService.updateComment(commentId: comment.id, postId: comment.postId, with: comment.likeCount - 1)

@@ -87,7 +87,7 @@ final class ProfileViewModel: ObservableObject {
     func loadData(for userId: String?) {
         do {
             isLoading = true
-            guard let userId = userId else { throw CustomError.expectationError("User is nil")}
+            guard let userId = userId else { throw CustomError.expectationError() }
             uid = userId
             try fetchUser(userId)
             try fetchUserPosts(userId)

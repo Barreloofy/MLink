@@ -8,7 +8,7 @@
 import Foundation
 
 enum CustomError: Error, LocalizedError {
-    case expectationError(String)
+    case expectationError(String = "User is nil.")
     
     var errorDescription: String? {
         switch self {

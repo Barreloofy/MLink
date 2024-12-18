@@ -20,7 +20,7 @@ final class CommentFormViewModel: ObservableObject {
     func createComment(user: UserModel?, postId: String, action: ((ActionType) -> Void)?) {
         Task {
             do {
-                guard let user = user else { throw CustomError.expectationError("User is nil.")}
+                guard let user = user else { throw CustomError.expectationError() }
                 try await FirestoreService.createComment(CommentModel(postId: postId, author: (id: user.id, name: user.name), content: text))
                 text = ""
                 action?(ActionType.update)
