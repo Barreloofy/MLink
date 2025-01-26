@@ -36,7 +36,6 @@
 		29BE7B512CB019DA00C27C01 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BE7B502CB019DA00C27C01 /* HomeView.swift */; };
 		29BE7B532CB01AC900C27C01 /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BE7B522CB01AC900C27C01 /* EditProfileView.swift */; };
 		29BE7B572CB0340900C27C01 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BE7B562CB0340900C27C01 /* ImageView.swift */; };
-		29C482B92CAE18A100F4DFD7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 29C482B82CAE189C00F4DFD7 /* .gitignore */; };
 		29C5D9252D46BA8D00E0F430 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 29C5D9242D46BA8D00E0F430 /* .gitignore */; };
 		29C65C772CACAF0500C798A2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C65C742CACAF0500C798A2 /* ContentView.swift */; };
 		29C65C782CACAF0500C798A2 /* MLinkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C65C752CACAF0500C798A2 /* MLinkApp.swift */; };
@@ -88,7 +87,6 @@
 		29BE7B502CB019DA00C27C01 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		29BE7B522CB01AC900C27C01 /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		29BE7B562CB0340900C27C01 /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
-		29C482B82CAE189C00F4DFD7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		29C5D9242D46BA8D00E0F430 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		29C65C602CACAEEE00C798A2 /* MLink.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLink.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		29C65C712CACAF0500C798A2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
@@ -217,7 +215,6 @@
 		29C65C7B2CACB03A00C798A2 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				29C482B82CAE189C00F4DFD7 /* .gitignore */,
 				29C65C7C2CACB06600C798A2 /* GoogleService-Info.plist */,
 			);
 			path = Resources;
@@ -355,7 +352,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				29C5D9252D46BA8D00E0F430 /* .gitignore in Resources */,
-				29C482B92CAE18A100F4DFD7 /* .gitignore in Resources */,
 				29C65C792CACAF0500C798A2 /* Preview Assets.xcassets in Resources */,
 				29C65C7A2CACAF0500C798A2 /* Assets.xcassets in Resources */,
 				29C65C7D2CACB06600C798A2 /* GoogleService-Info.plist in Resources */,
